@@ -1,13 +1,28 @@
 import { setTimeout } from "timers/promises";
 import TelegramBot from 'node-telegram-bot-api';
+import moment from "moment";
+import { promisify } from 'node:util';
+import { execFile as execFileCb } from 'node:child_process';
 
 import WipiAPIService from './wipi.mjs';
 import Util from './util.mjs';
 import TelegramService from "./tservice.mjs";
+import { install_hook_to } from "./stdout-hook.mjs";
 
 const util_instance = new Util();
 const wipi_service = new WipiAPIService(process.env.WIPI_SERVER_URL, process.env.WIPI_TOKEN, process.env.WIPI_STORE_ID, process.env.WIPI_PAYMENT_ID);
 const tservice = new TelegramService(wipi_service);
+
+// hook telegram logs
+moment.locale('ko');
+var stdout = process.stdout;
+install_hook_to(stdout);
+stdout.hook('write', function(string, encoding, fd, write) {
+    const current_time = moment().format();
+    write(`[${current_time}] ${string}`);
+}, true);
+
+const execFile = promisify(execFileCb);
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, {polling: true});
 
@@ -16,6 +31,15 @@ bot.onText(/\/check/, async (msg, match) => {
     if (`${chatId}` === process.env.CHAT_ID) {
         const status = await tservice.reservable_status(Number(process.env.WIPI_TEACHER_ID));
         bot.sendMessage(process.env.CHAT_ID, status.join('\n'));
+    }
+});
+
+bot.onText(/\/s (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (`${chatId}` === process.env.CHAT_ID) {
+        // const { stdout, stderr } = await execFile('notify-send', [match[1]]);
+        await execFile('notify-send', [match[1]]);
+        bot.sendMessage(process.env.CHAT_ID, 'OK');
     }
 });
 
