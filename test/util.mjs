@@ -31,6 +31,7 @@ describe('Util', () => {
             [{ week: "202240", week_day: "7" }, 2022, 10, 9],
             [{ week: "202241", week_day: "1" }, 2022, 10, 10],
             [{ week: "202244", week_day: "2" }, 2022, 11, 1],
+            [{ week: "202307", week_day: "1" }, 2023, 2, 13],
         ]
 
         for (const [input, year, month, day] of test_cases) {

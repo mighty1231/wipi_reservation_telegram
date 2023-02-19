@@ -50,7 +50,8 @@ class Util {
     
     get_date_from_week({ week, week_day }) {
         const base_day = new Date(2022, 0, 3); // 2022.1.3 (month is 0-indexed)
-        const base_week = 202201;
+        const base_year = 2022;
+        const base_week = 1;
     
         if (!/^202[0-9]{3}$/.test(week)) {
             return null;
@@ -60,10 +61,11 @@ class Util {
             return null;
         }
     
-        const weekn = new Number(week);
+        const yearn = new Number(week.slice(0, 4));
+        const weekn = new Number(week.slice(4, 6));
         const weekdayn = new Number(week_day);
-    
-        const dayn = (weekn - base_week) * 7 + (weekdayn - 1);
+
+        const dayn = ((yearn - base_year) * 52 + (weekn - base_week)) * 7 + (weekdayn - 1);
         const ret = new Date(2022, 0, 3);
         ret.setDate(base_day.getDate() + dayn);
         return ret;
