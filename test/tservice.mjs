@@ -16,15 +16,15 @@ describe('TelegramService', () => {
             const reserved = await ts.reservable_status(333);
             expect(reserved).deep.equals([
                 'Mine',
-                '2022.10.09 (Sun) 4 PM',
-                "2022.10.23 (Sun) 4 PM",
-                "2022.10.30 (Sun) 7 PM",
+                '2022.10.09 (Sun) 4 PM \u{1F44D}',
+                "2022.10.23 (Sun) 4 PM \u{1F44D}",
+                "2022.10.30 (Sun) 7 PM \u{1F44D}",
                 '====',
                 'Available',
-                '2022.10.09 (Sun) 1 PM',
+                '2022.10.09 (Sun) 1 PM \u{1F44D}',
                 '2022.10.10 (Mon) 7 PM',
                 "2022.10.14 (Fri) 4 PM",
-                "2022.10.16 (Sun) 7 PM",
+                "2022.10.16 (Sun) 7 PM \u{1F44D}",
                 "2022.10.17 (Mon) 4 PM",
                 "2022.10.24 (Mon) 3 PM",
             ]);

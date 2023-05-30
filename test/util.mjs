@@ -44,14 +44,24 @@ describe('Util', () => {
     });
 
     describe('schedule_to_string', () => {
-        it(`should return string correctly`, () => {
+        it('should return string correctly', () => {
             const target = util_instance.schedule_to_string({ week: "202240", week_day: "7", time: "13:00" });
-            expect(target).equal('2022.10.09 (Sun) 1 PM');
+            expect(target).equal('2022.10.09 (Sun) 1 PM \u{1F44D}');
         });
 
-        it(`should return string correctly(2)`, () => {
+        it('should return string correctly(2)', () => {
             const target = util_instance.schedule_to_string({ week: "202240", week_day: "7", time: "12:00" });
-            expect(target).equal('2022.10.09 (Sun) 12 PM');
+            expect(target).equal('2022.10.09 (Sun) 12 PM \u{1F44D}');
+        });
+
+        it('should return string correctly(3)', () => {
+            const target = util_instance.schedule_to_string({ week: "202240", week_day: "6", time: "12:00" });
+            expect(target).equal('2022.10.08 (Sat) 12 PM \u{1F44D}');
+        });
+
+        it('should return string without thumbs_up character', () => {
+            const target = util_instance.schedule_to_string({ week: "202240", week_day: "3", time: "15:00" });
+            expect(target).equal('2022.10.05 (Wen) 3 PM');
         });
     });
 });

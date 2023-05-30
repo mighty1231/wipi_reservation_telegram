@@ -73,7 +73,12 @@ class Util {
 
     schedule_to_string(schedule) {
         const date = this.get_date_from_week(schedule);
-        return `${pad(date.getFullYear())}.${pad(date.getMonth()+1)}.${pad(date.getDate())} (${DAY_SYMBOL[date.getDay()]}) ${transform_time(schedule.time)}`
+        const raw_schedule = `${pad(date.getFullYear())}.${pad(date.getMonth()+1)}.${pad(date.getDate())} (${DAY_SYMBOL[date.getDay()]}) ${transform_time(schedule.time)}`
+        if ([0, 6].includes(date.getDay())
+            || ['20:00', '21:00', '22:00'].includes(schedule.time)) {
+                return `${raw_schedule} \u{1F44D}`;
+        }
+        return raw_schedule;
     }
 }
 

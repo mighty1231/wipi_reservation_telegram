@@ -43,6 +43,13 @@ bot.onText(/\/s (.+)/, async (msg, match) => {
     }
 });
 
+bot.onText(/\/print (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (`${chatId}` === process.env.CHAT_ID) {
+        console.log(match[1]);
+    }
+});
+
 async function check_reservable_background(teacher_id) {
     let old_reservables = [];
 
