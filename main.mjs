@@ -8,6 +8,7 @@ import WipiAPIService from './wipi.mjs';
 import Util from './util.mjs';
 import TelegramService from "./tservice.mjs";
 import { install_hook_to } from "./stdout-hook.mjs";
+import axios from "axios";
 
 const util_instance = new Util();
 const wipi_service = new WipiAPIService(process.env.WIPI_SERVER_URL, process.env.WIPI_TOKEN, process.env.WIPI_STORE_ID, process.env.WIPI_PAYMENT_ID);
@@ -53,17 +54,33 @@ bot.onText(/\/print (.+)/, async (msg, match) => {
 async function check_reservable_background(teacher_id) {
     let old_reservables = [];
 
+    let error_count = 0;
     while (true) {
-        const { reservables, differences } = await tservice.get_reservable_and_difference(teacher_id, old_reservables);
-        old_reservables = reservables;
+        try {
+            const { reservables, differences } = await tservice.get_reservable_and_difference(teacher_id, old_reservables);
+            old_reservables = reservables;
 
-        if (differences.length > 0) {
-            const buf = ['New schedule!'].concat(differences.map((new_schedule) => {
-                return util_instance.schedule_to_string(new_schedule);
-            }));
-            await bot.sendMessage(process.env.CHAT_ID, buf.join('\n'));
+            if (differences.length > 0) {
+                const buf = ['New schedule!'].concat(differences.map((new_schedule) => {
+                    return util_instance.schedule_to_string(new_schedule);
+                }));
+                await bot.sendMessage(process.env.CHAT_ID, buf.join('\n'));
+            }
+            error_count = 0;
+            await setTimeout(10*60*1000); // 10 minutes
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.cause?.message && error.cause.message.includes('EAI_AGAIN')) {
+                console.log('EAI_AGAIN');
+            } else {
+                console.log(error);
+            }
+            if (error_count > 5) {
+                const message = (typeof error === 'object' && 'message' in error) ? error.message : "Unknown";
+                await bot.sendMessage(process.env.CHAT_ID, `error_count is ${error_count} with error message ${message}`);
+            }
+            error_count += 1;
+            await setTimeout(30*60*1000); // 30 minutes
         }
-        await setTimeout(10*60*1000); // 10 minutes
     }
 }
 
