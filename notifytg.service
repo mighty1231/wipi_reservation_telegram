@@ -1,0 +1,14 @@
+[Unit]
+Description=Notify tg service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+WorkingDirectory=(현재 디렉토리 절대경로)
+ExecStart=/bin/bash -c "/(HOME_DIR)/.nvm/versions/node/(노드버전)/bin/node -r dotenv/config main.mjs"
+
+[Install]
+WantedBy=multi-user.target
